@@ -1,0 +1,15 @@
+# secrets
+.env
+.env.*
+!.env.example
+http-client.private.env.json
+
+# os specific
+.DS_Store
+.idea/
+.vscode/
+
+# php specific
+/.phpunit.cache
+/vendor/
+_private_/
