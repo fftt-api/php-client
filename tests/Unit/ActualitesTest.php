@@ -16,5 +16,5 @@ it('devrait récupérer les dernières actualités de la fédération', function
     expect($actualites)->toBeArray()
         ->and($actualites)->not->toBeEmpty()
         ->and($actualites[0])->toBeInstanceOf(Actualite::class)
-        ->and($actualites[0]->titre())->toBe('Disparition de Christian Gendraud');
+        ->and($actualites[0]->date()->isValid())->toBeTrue();
 });

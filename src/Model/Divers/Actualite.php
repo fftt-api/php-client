@@ -26,7 +26,7 @@ final readonly class Actualite implements CanSerialize
     {
         $model = new self;
 
-        $model->date = DateTimeUtils::date($data['date']);
+        $model->date = DateTimeUtils::date($data['date'], format: 'Y-m-d H:i:s');
         $model->titre = $data['titre'];
         $model->description = $data['description'];
         $model->url = $data['url'];
