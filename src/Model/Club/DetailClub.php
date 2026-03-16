@@ -7,7 +7,6 @@ namespace FFTTApi\Model\Club;
 use Carbon\Carbon;
 use FFTTApi\Util\ValueTransformer;
 use FFTTApi\Model\CanSerialize;
-use FFTTApi\Util\DateTimeUtils;
 
 final readonly class DetailClub implements CanSerialize
 {
