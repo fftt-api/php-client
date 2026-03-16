@@ -7,7 +7,6 @@ namespace FFTTApi\Service;
 use FFTTApi\Contract\JoueurContract;
 use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
-use FFTTApi\Enum\TypeLicence;
 use FFTTApi\Model\Joueur\DetailJoueur;
 use FFTTApi\Model\Joueur\DetailJoueurBaseClassement;
 use FFTTApi\Model\Joueur\DetailJoueurBaseSPID;
@@ -98,13 +97,13 @@ final readonly class JoueurService implements JoueurContract
     }
 
     /** @inheritdoc */
-    public function joueursParClubEtType(string $numeroClub, TypeLicence $typeLicence): array
+    public function joueursParClubEtType(string $numeroClub, array $typesLicence): array
     {
         $response = $this->httpClient->fetch(API::XML_LICENCE_B, ['club' => $numeroClub]);
 
         $joueurs = array_map(DetailJoueur::fromArray(...), $response['licence'] ?? []);
 
-        return array_filter($joueurs, fn (DetailJoueur $joueur) => $joueur->typeLicence() === $typeLicence);
+        return array_filter($joueurs, fn (DetailJoueur $joueur) => in_array($joueur->typeLicence(), $typesLicence, strict: true));
     }
 
     /** @inheritdoc */

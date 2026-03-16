@@ -74,7 +74,7 @@ it('devrait rechercher des joueurs par leur club', function (): void {
 });
 
 it('devrait rechercher des joueurs par leur club et leur type de licence', function (): void {
-    $result = $this->api->joueur->joueursParClubEtType('', TypeLicence::COMPETITION);
+    $result = $this->api->joueur->joueursParClubEtType('', [TypeLicence::COMPETITION]);
 
     expect($result)->toBeArray()
         ->and($result)->not->toBeEmpty()

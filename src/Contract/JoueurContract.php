@@ -91,9 +91,11 @@ interface JoueurContract
      * Cherche un ou plusieurs joueur(s) par leur numéro de club
      * et leur type de licence.
      *
+     * @param TypeLicence[] $typesLicence
+     *
      * @return array<array-key, DetailJoueur[]> Ensemble des joueurs trouvés
      */
-    public function joueursParClubEtType(string $numeroClub, TypeLicence $typeLicence): array;
+    public function joueursParClubEtType(string $numeroClub, array $typesLicence): array;
 
     /**
      * Endpoint : xml_joueur.php
