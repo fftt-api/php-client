@@ -33,7 +33,7 @@ final readonly class DetailClub implements CanSerialize
         $model->numero = $data['numero'];
         $model->nom = $data['nom'];
         $model->siteInternet = ValueTransformer::nullOrString($data['web']);
-        $model->dateValidation = empty($validatedAt) ? null : DateTimeUtils::date($validatedAt, format: 'd/m/Y');
+        $model->dateValidation = ValueTransformer::nullOrDate($data['validation'], format: 'd/m/Y');
 
         $model->salle = new Salle(
             nom: $data['nomsalle'],
