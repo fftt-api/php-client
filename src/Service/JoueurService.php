@@ -200,6 +200,10 @@ final readonly class JoueurService implements JoueurContract
         return array_reduce(
             array: $parties,
             callback: function (float $total, Partie $partie) use ($joueur): float {
+                if ($partie->forfait()) {
+                    return $total;
+                }
+
                 $resultat = EstimationPoint::estimer(
                     classementJoueurA: $joueur->pointsOfficiels(),
                     classementJoueurB: $partie->pointsAdversaire(),
@@ -223,7 +227,10 @@ final readonly class JoueurService implements JoueurContract
         return array_reduce(
             array: $this->partiesNonValidees($licence),
             callback: function (float $total, Partie $partie) use ($joueur, $dateDebut, $dateFin): float {
-                if ($partie->date()->isAfter($dateDebut) && $partie->date()->isBefore($dateFin)) {
+                $dateInRange = $partie->date()->isAfter($dateDebut) && $partie->date()->isBefore($dateFin);
+                $exactDate = $partie->date()->isSameDay($dateDebut);
+
+                if (($exactDate || $dateInRange) && !$partie->forfait()) {
                     $resultat = EstimationPoint::estimer(
                         classementJoueurA: $joueur->pointsOfficiels(),
                         classementJoueurB: $partie->pointsAdversaire(),
