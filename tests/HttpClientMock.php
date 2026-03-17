@@ -54,11 +54,13 @@ final class HttpClientMock extends AbstractHttpClient implements HttpClientContr
             $valid = [];
 
             foreach ($mockData['params'] as $param => $value) {
-                if (
-                    ($value === true && isset($requestParams[$param]))
-                    || ($value === false && !isset($requestParams[$param]))
-                    || ($value === (string)$requestParams[$param])
-                ) {
+                $exists = array_key_exists($param, $requestParams);
+
+                if ($value === true && $exists) {
+                    $valid[] = true;
+                } elseif ($value === false && !$exists) {
+                    $valid[] = true;
+                } elseif ($exists && $value === (string)$requestParams[$param]) {
                     $valid[] = true;
                 } else {
                     $valid[] = false;
