@@ -45,6 +45,14 @@ abstract class AbstractHttpClient
      */
     protected function convertXmlToObject(string $content): array
     {
+        if (empty($content)) {
+            return [];
+        }
+
+        if (!str_starts_with($content, '<?xml')) {
+            throw XMLConversionException::make();
+        }
+
         $converted = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
 
         if ($converted === false) {

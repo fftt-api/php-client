@@ -6,7 +6,7 @@ namespace FFTTApi\Core;
 
 use FFTTApi\Enum\API;
 use FFTTApi\Exception\HttpException;
-use FFTTApi\Exception\HttpStatusException;
+use FFTTApi\Exception\XMLConversionException;
 
 /**
  * Client HTTP pour communiquer avec l'API de la FFTT.
@@ -34,19 +34,29 @@ final class HttpClient extends AbstractHttpClient implements HttpClientContract
      */
     public function fetch(API $endpoint, array $requestParams): array
     {
-        ['response' => $rawResponse, 'contentType' => $contentType] = self::executeCall($endpoint, $requestParams);
-        $sanitizedResponse = self::sanitizeResponse($rawResponse, $contentType);
+        ['response' => $rawResponse, 'contentType' => $contentType, 'httpCode' => $httpCode] = self::executeCall($endpoint, $requestParams);
 
-        return self::convertXmlToObject($sanitizedResponse);
+        try {
+            $sanitizedResponse = self::sanitizeResponse($rawResponse, $contentType);
+            $payload = self::convertXmlToObject($sanitizedResponse);
+
+            if ($httpCode !== 200) {
+                throw new HttpException($payload['erreur']);
+            }
+
+            return $payload;
+        } catch (XMLConversionException) {
+            throw new HttpException('Le format de la réponse reçue n\'est pas valide.');
+        }
     }
 
     /**
      * Appelle un endpoint de la Fédération.
      *
      *
-     * @return array{response: string, contentType: string}
+     * @return array{response: string, contentType: string, httpCode: int}
      *
-     * @throws HttpException|HttpStatusException
+     * @throws HttpException
      */
     private function executeCall(API $endpoint, array $requestParams): array
     {
@@ -99,13 +109,10 @@ final class HttpClient extends AbstractHttpClient implements HttpClientContract
             throw HttpException::make(curl_error($ch));
         }
 
-        if (200 !== $httpCode) {
-            throw HttpStatusException::make($httpCode);
-        }
-
         return [
             'response' => $response,
             'contentType' => $contentType,
+            'httpCode' => $httpCode,
         ];
     }
 }
