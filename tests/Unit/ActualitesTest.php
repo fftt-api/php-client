@@ -7,7 +7,7 @@ use FFTTApi\Model\Divers\Actualite;
 use FFTTApi\Tests\HttpClientMock;
 
 beforeEach(function (): void {
-    $this->api = FFTTApi::create('', '', '', new HttpClientMock);
+    $this->api = FFTTApi::create(appId: '', appKey: '', serial: '', httpClient: HttpClientMock::class);
 });
 
 it('devrait récupérer les dernières actualités de la fédération', function (): void {
