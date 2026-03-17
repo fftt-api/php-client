@@ -7,6 +7,7 @@ namespace FFTTApi\Service;
 use FFTTApi\Contract\JoueurContract;
 use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
+use FFTTApi\Exception\HttpException;
 use FFTTApi\Model\Joueur\DetailJoueur;
 use FFTTApi\Model\Joueur\DetailJoueurBaseClassement;
 use FFTTApi\Model\Joueur\DetailJoueurBaseSPID;
@@ -91,19 +92,27 @@ final readonly class JoueurService implements JoueurContract
     /** @inheritdoc */
     public function joueursParClub(string $numeroClub): array
     {
-        $response = $this->httpClient->fetch(API::XML_LICENCE_B, ['club' => $numeroClub]);
+        try {
+            $response = $this->httpClient->fetch(API::XML_LICENCE_B, ['club' => $numeroClub]);
 
-        return array_map(DetailJoueur::fromArray(...), $response['licence'] ?? []);
+            return array_map(DetailJoueur::fromArray(...), $response['licence'] ?? []);
+        } catch (HttpException) {
+            return [];
+        }
     }
 
     /** @inheritdoc */
     public function joueursParClubEtType(string $numeroClub, array $typesLicence): array
     {
-        $response = $this->httpClient->fetch(API::XML_LICENCE_B, ['club' => $numeroClub]);
+        try {
+            $response = $this->httpClient->fetch(API::XML_LICENCE_B, ['club' => $numeroClub]);
 
-        $joueurs = array_map(DetailJoueur::fromArray(...), $response['licence'] ?? []);
+            $joueurs = array_map(DetailJoueur::fromArray(...), $response['licence'] ?? []);
 
-        return array_filter($joueurs, fn (DetailJoueur $joueur) => in_array($joueur->typeLicence(), $typesLicence, strict: true));
+            return array_filter($joueurs, fn (DetailJoueur $joueur) => in_array($joueur->typeLicence(), $typesLicence, strict: true));
+        } catch (HttpException) {
+            return [];
+        }
     }
 
     /** @inheritdoc */
