@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use FFTTApi\Core\HttpClientMock;
 use FFTTApi\Enum\TypeEquipe;
 use FFTTApi\FFTTApi;
 use FFTTApi\Model\Club\Club;
 use FFTTApi\Model\Club\DetailClub;
 use FFTTApi\Model\Club\Equipe;
+use FFTTApi\Tests\HttpClientMock;
 
 beforeEach(function (): void {
     $this->api = FFTTApi::create('', '', '', new HttpClientMock);

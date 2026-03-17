@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use FFTTApi\Core\HttpClientMock;
 use FFTTApi\Enum\TypeLicence;
 use FFTTApi\FFTTApi;
 use FFTTApi\Model\Joueur\DetailJoueur;
@@ -14,6 +13,7 @@ use FFTTApi\Model\Joueur\JoueurBaseSPID;
 use FFTTApi\Model\Partie\Partie;
 use FFTTApi\Model\Partie\PartieBaseClassement;
 use FFTTApi\Model\Partie\PartieBaseSPID;
+use FFTTApi\Tests\HttpClientMock;
 
 beforeEach(function (): void {
     $this->api = FFTTApi::create('', '', '', new HttpClientMock);

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use FFTTApi\Core\HttpClientMock;
 use FFTTApi\FFTTApi;
 use FFTTApi\Model\Divers\Actualite;
+use FFTTApi\Tests\HttpClientMock;
 
 beforeEach(function (): void {
     $this->api = FFTTApi::create('', '', '', new HttpClientMock);

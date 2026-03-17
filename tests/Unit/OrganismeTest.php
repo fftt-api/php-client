@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use FFTTApi\Core\HttpClientMock;
 use FFTTApi\Enum\TypeOrganisme;
 use FFTTApi\FFTTApi;
 use FFTTApi\Model\Organisme\Organisme;
+use FFTTApi\Tests\HttpClientMock;
 
 beforeEach(function (): void {
     $this->api = FFTTApi::create('', '', '', new HttpClientMock);

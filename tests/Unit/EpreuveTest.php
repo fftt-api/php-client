@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use FFTTApi\Core\HttpClientMock;
 use FFTTApi\Enum\TypeEpreuve;
 use FFTTApi\FFTTApi;
 use FFTTApi\Model\Epreuve\Division;
 use FFTTApi\Model\Epreuve\Epreuve;
+use FFTTApi\Tests\HttpClientMock;
 
 beforeEach(function (): void {
     $this->api = FFTTApi::create('', '', '', new HttpClientMock);

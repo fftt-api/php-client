@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace FFTTApi\Core;
+namespace FFTTApi\Tests;
 
+use FFTTApi\Core\AbstractHttpClient;
+use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
 use InvalidArgumentException;
 
@@ -58,7 +60,7 @@ final class HttpClientMock extends AbstractHttpClient implements HttpClientContr
             default => throw new InvalidArgumentException('Endpoint API non supporté')
         };
 
-        $mockContent = file_get_contents(__DIR__ . '/../../../snapshots/snapshots/' . $mock);
+        $mockContent = file_get_contents(__DIR__ . '/../../snapshots/snapshots/' . $mock);
 
         $content = $this->sanitizeResponse($mockContent);
 
