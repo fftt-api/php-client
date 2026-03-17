@@ -47,7 +47,7 @@ final readonly class Equipe implements CanSerialize
         $model->idOrganisme = (int)$linkParts['organisme_pere'];
 
         $model->division = Division::fromArray([
-            'id' => $model->idDivision,
+            'iddivision' => $model->idDivision,
             'libelle' => $model->libelleDivision,
         ]);
 
