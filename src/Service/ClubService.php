@@ -63,7 +63,7 @@ final readonly class ClubService implements ClubContract
     }
 
     /** @inheritdoc */
-    public function detailClub(string $code, ?string $idEquipe = null): DetailClub
+    public function detailClub(string $code, ?string $idEquipe = null): ?DetailClub
     {
         $params = ['club' => $code];
 
@@ -72,6 +72,10 @@ final readonly class ClubService implements ClubContract
         }
 
         $response = $this->httpClient->fetch(API::XML_CLUB_DETAIL, $params);
+
+        if ($response === []) {
+            return null;
+        }
 
         return DetailClub::fromArray($response['club']);
     }
