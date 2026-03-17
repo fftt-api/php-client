@@ -46,6 +46,7 @@
 		"lint": "pint --parallel",
 		"refactor": "rector --dry-run",
 		"analyze": "phpstan analyse --ansi --memory-limit=1G",
-		"test": "pest --colors=always --coverage --parallel"
+		"test": "pest --colors=always --display-warnings --parallel",
+		"test:coverage": "pest --colors=always --coverage --display-warnings --parallel"
 	}
 }
