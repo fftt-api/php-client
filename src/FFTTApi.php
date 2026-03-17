@@ -51,11 +51,14 @@ final readonly class FFTTApi
      * @param string $appId Identifiant unique fourni par la FFTT.
      * @param string $appKey Mot de passe unique fourni par la FFTT.
      * @param string $serial Chaîne de caractères identifiant l'utilisateur de façon permanente, doit respecter le format suivant : [A-Za-z0-9]{15}.
+     * @param class-string<HttpClientContract>|null $httpClient Classe du client HTTP à utiliser.
      */
-    public static function create(string $appId, string $appKey, string $serial, ?HttpClientContract $httpClient = null): self
+    public static function create(string $appId, string $appKey, string $serial, ?string $httpClient = null): self
     {
-        if (!$httpClient instanceof HttpClientContract) {
+        if (!is_subclass_of($httpClient, HttpClientContract::class)) {
             $httpClient = new HttpClient($appId, $appKey, $serial);
+        } else {
+            $httpClient = new $httpClient($appId, $appKey, $serial);
         }
 
         return new self($httpClient);
