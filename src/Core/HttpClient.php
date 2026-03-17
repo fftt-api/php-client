@@ -34,10 +34,10 @@ final class HttpClient extends AbstractHttpClient implements HttpClientContract
      */
     public function fetch(API $endpoint, array $requestParams): array
     {
-        ['response' => $rawResponse, 'contentType' => $contentType, 'httpCode' => $httpCode] = self::executeCall($endpoint, $requestParams);
+        ['response' => $rawResponse, 'httpCode' => $httpCode] = self::executeCall($endpoint, $requestParams);
 
         try {
-            $sanitizedResponse = self::sanitizeResponse($rawResponse, $contentType);
+            $sanitizedResponse = self::sanitizeResponse($rawResponse);
             $payload = self::convertXmlToObject($sanitizedResponse);
 
             if ($httpCode !== 200) {
@@ -103,7 +103,6 @@ final class HttpClient extends AbstractHttpClient implements HttpClientContract
 
         $response = (string)curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
         if (curl_error($ch) !== '' && curl_error($ch) !== '0') {
             throw HttpException::make(curl_error($ch));
@@ -111,7 +110,6 @@ final class HttpClient extends AbstractHttpClient implements HttpClientContract
 
         return [
             'response' => $response,
-            'contentType' => $contentType,
             'httpCode' => $httpCode,
         ];
     }

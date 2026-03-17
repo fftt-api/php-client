@@ -27,15 +27,9 @@ abstract class AbstractHttpClient
     /** @var string URL de base sur laquelle les endpoints se greffent. */
     protected string $baseUrl = 'https://apiv2.fftt.com/mobile/pxml';
 
-    protected function sanitizeResponse(string $content, ?string $contentType = null): string
+    protected function sanitizeResponse(string $content): string
     {
-        $content = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $content);
-
-        if ($contentType !== 'text/html; charset=UTF-8') {
-            $content = mb_convert_encoding($content, 'ISO-8859-1', 'UTF-8');
-        }
-
-        return html_entity_decode((string)$content);
+        return preg_replace('/encoding="ISO-8859-1"/i', 'encoding="UTF-8"', $content);
     }
 
     /**
