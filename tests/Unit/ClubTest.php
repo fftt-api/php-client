@@ -22,6 +22,12 @@ describe('[xml_club_dep2]', function (): void {
             ->and($result[0])->toBeInstanceOf(Club::class)
             ->and($result[0]->numero())->toBe('10160237');
     });
+
+    it('devrait retourner un tableau vide si mauvais département', function (): void {
+        $result = $this->api->club->clubsParDepartement('999999');
+
+        expect($result)->toBeArray()->and($result)->toBeEmpty();
+    });
 });
 
 describe('[xml_club_b]', function (): void {
@@ -32,6 +38,12 @@ describe('[xml_club_b]', function (): void {
             ->and($result)->not->toBeEmpty()
             ->and($result[0])->toBeInstanceOf(Club::class)
             ->and($result[0]->numero())->toBe('10330035');
+    });
+
+    it('devrait retourner un tableau vide si mauvais code postal', function (): void {
+        $result = $this->api->club->clubsParCodePostal('999999');
+
+        expect($result)->toBeArray()->and($result)->toBeEmpty();
     });
 
     it('devrait récupérer des clubs par ville', function (): void {
@@ -60,6 +72,12 @@ describe('[xml_club_detail]', function (): void {
         expect($result)->toBeInstanceOf(DetailClub::class)
             ->and($result->numero())->toBe('10160085');
     });
+
+    it('devrait retourner null si aucun club trouvé', function (): void {
+        $result = $this->api->club->detailClub('999999');
+
+        expect($result)->toBeNull();
+    });
 });
 
 describe('[xml_equipe]', function (): void {
@@ -70,5 +88,12 @@ describe('[xml_equipe]', function (): void {
             ->and($result)->not->toBeEmpty()
             ->and($result[0])->toBeInstanceOf(Equipe::class)
             ->and($result[0]->idEquipe())->toBe(10998);
+    });
+
+    it('devrait retourner un tableau vide si aucun club trouvé', function (): void {
+        $result = $this->api->club->equipesClub('999999', TypeEquipe::MASCULINE);
+
+        expect($result)->toBeArray()
+            ->and($result)->toBeEmpty();
     });
 });
