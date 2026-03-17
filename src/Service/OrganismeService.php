@@ -21,12 +21,13 @@ final class OrganismeService implements OrganismeContract
 
     public function __construct(private readonly HttpClientContract $httpClient)
     {
-        $this->remplirOrganismes();
     }
 
     /** @inheritdoc */
     public function organismesParType(TypeOrganisme $orgType): array
     {
+        $this->remplirOrganismes();
+
         return array_values(array_filter(
             $this->organismes,
             fn (Organisme $org): bool => $org->type() === $orgType
@@ -36,12 +37,16 @@ final class OrganismeService implements OrganismeContract
     /** @inheritdoc */
     public function organisme(string $code): ?Organisme
     {
+        $this->remplirOrganismes();
+
         return array_find($this->organismes, fn (Organisme $org): bool => $org->code() === $code);
     }
 
     /** @inheritdoc */
     public function organismesEnfants(string $code): array
     {
+        $this->remplirOrganismes();
+
         $parentId = $this->organisme($code)?->id();
 
         if ($parentId === null) {
