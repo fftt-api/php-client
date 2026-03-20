@@ -7,6 +7,7 @@ namespace FFTTApi\Service;
 use FFTTApi\Contract\EpreuveParEquipeContract;
 use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
+use FFTTApi\Enum\Charset;
 use FFTTApi\Model\Epreuve\ParEquipes\Poule\EquipePoule;
 use FFTTApi\Model\Epreuve\ParEquipes\Poule\Poule;
 use FFTTApi\Model\Epreuve\ParEquipes\Rencontre\DetailRencontre;
@@ -43,7 +44,7 @@ final readonly class EpreuveParEquipeService implements EpreuveParEquipeContract
             $params['cx_poule'] = $pouleId;
         }
 
-        $response = $this->httpClient->fetch(API::XML_RESULT_EQU, $params);
+        $response = $this->httpClient->fetch(API::XML_RESULT_EQU, $params, Charset::ISO_8859_1);
 
         return array_map(Rencontre::fromArray(...), $response['tour'] ?? []);
     }
@@ -92,19 +93,21 @@ final readonly class EpreuveParEquipeService implements EpreuveParEquipeContract
     }
 
     /** @inheritdoc */
-    public function detailRencontre(int $rencontreId, array $extraParams): DetailRencontre
+    public function detailRencontre(int $rencontreId, ?array $extraParams = null): ?DetailRencontre
     {
-        $response = $this->httpClient->fetch(API::XML_CHP_RENC, [
-            'is_retour' => $extraParams['is_retour'],
-            'phase' => $extraParams['phase'],
-            'res_1' => $extraParams['res_1'],
-            'res_2' => $extraParams['res_2'],
+        $params = [
             'renc_id' => $rencontreId,
-            'equip_1' => $extraParams['equip_1'],
-            'equip_2' => $extraParams['equip_2'],
-            'equip_id1' => $extraParams['equip_id1'],
-            'equip_id2' => $extraParams['equip_id2'],
-        ]);
+        ];
+
+        if ($extraParams !== null) {
+            $params = array_merge($params, $extraParams);
+        }
+
+        $response = $this->httpClient->fetch(API::XML_CHP_RENC, $params, Charset::ISO_8859_1);
+
+        if (empty($response)) {
+            return null;
+        }
 
         return DetailRencontre::fromArray($response);
     }

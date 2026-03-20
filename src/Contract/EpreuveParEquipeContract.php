@@ -64,9 +64,9 @@ interface EpreuveParEquipeContract
      *     equip_2: string,
      *     equip_id1: int,
      *     equip_id2: int
-     * } $extraParams
+     * }|null $extraParams
      *
      * @return ?DetailRencontre Détails de la rencontre si trouvée
      */
-    public function detailRencontre(int $rencontreId, array $extraParams): ?DetailRencontre;
+    public function detailRencontre(int $rencontreId, ?array $extraParams = null): ?DetailRencontre;
 }
