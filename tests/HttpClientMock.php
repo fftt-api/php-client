@@ -7,8 +7,10 @@ namespace FFTTApi\Tests;
 use FFTTApi\Core\AbstractHttpClient;
 use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
+use FFTTApi\Enum\Charset;
 use FFTTApi\Exception\HttpException;
 use FFTTApi\Exception\XMLConversionException;
+use LibXMLError;
 
 final class HttpClientMock extends AbstractHttpClient implements HttpClientContract
 {
@@ -28,8 +30,10 @@ final class HttpClientMock extends AbstractHttpClient implements HttpClientContr
         $this->tmc = hash_hmac('sha1', $this->time, hash('md5', $this->appKey));
     }
 
-    public function fetch(API $endpoint, array $requestParams): array
+    public function fetch(API $endpoint, array $requestParams, Charset $charset = Charset::UTF_8): array
     {
+        libxml_use_internal_errors(true);
+
         if ($endpoint === API::XML_INITIALISATION) {
             $requestParams['serie'] = $this->serial;
         }
@@ -80,7 +84,7 @@ final class HttpClientMock extends AbstractHttpClient implements HttpClientContr
         $mockContent = file_get_contents(__DIR__ . '/../../snapshots/snapshots/' . $mock['snapshot']);
 
         try {
-            $content = $this->sanitizeResponse($mockContent);
+            $content = $this->sanitizeResponse($mockContent, $charset);
             $payload = $this->convertXmlToObject($content);
 
             if ($mock['http_code'] !== 200) {
@@ -91,5 +95,65 @@ final class HttpClientMock extends AbstractHttpClient implements HttpClientContr
         } catch (XMLConversionException) {
             throw new HttpException('Le format de la réponse reçue n\'est pas valide.');
         }
+    }
+
+    /**
+     * Transforme une réponse XML en tableau associatif.
+     *
+     * @throws XMLConversionException
+     */
+    protected function convertXmlToObject(string $content): array
+    {
+        if (empty($content)) {
+            return [];
+        }
+
+        if (!str_starts_with($content, '<?xml')) {
+            throw XMLConversionException::make();
+        }
+
+        $converted = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+        if ($converted === false) {
+            $errors = libxml_get_errors();
+
+            foreach ($errors as $error) {
+                echo $this->displayXmlError($error, $content);
+            }
+
+            libxml_clear_errors();
+
+            throw XMLConversionException::make();
+        }
+
+        return json_decode(json_encode($converted), associative: true);
+    }
+
+    private function displayXmlError(LibXMLError $error, string $xml): string
+    {
+        $return = $xml[$error->line - 1] . "\n";
+        $return .= str_repeat('-', $error->column) . "^\n";
+
+        switch ($error->level) {
+            case LIBXML_ERR_WARNING:
+                $return .= "Warning $error->code: ";
+                break;
+            case LIBXML_ERR_ERROR:
+                $return .= "Error $error->code: ";
+                break;
+            case LIBXML_ERR_FATAL:
+                $return .= "Fatal Error $error->code: ";
+                break;
+        }
+
+        $return .= mb_trim($error->message) .
+            "\n  Line: $error->line" .
+            "\n  Column: $error->column";
+
+        if ($error->file) {
+            $return .= "\n  File: $error->file";
+        }
+
+        return "$return\n\n--------------------------------------------\n\n";
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FFTTApi\Core;
 
+use FFTTApi\Enum\Charset;
 use FFTTApi\Exception\XMLConversionException;
 
 abstract class AbstractHttpClient
@@ -27,9 +28,15 @@ abstract class AbstractHttpClient
     /** @var string URL de base sur laquelle les endpoints se greffent. */
     protected string $baseUrl = 'https://apiv2.fftt.com/mobile/pxml';
 
-    protected function sanitizeResponse(string $content): string
+    protected function sanitizeResponse(string $content, Charset $charset = Charset::UTF_8): string
     {
-        return preg_replace('/encoding="ISO-8859-1"/i', 'encoding="UTF-8"', $content);
+        if ($charset === Charset::UTF_8) {
+            $pattern = sprintf('/encoding="%s"/i', Charset::ISO_8859_1->value);
+            $replacement = sprintf('encoding="%s"', Charset::UTF_8->value);
+            return preg_replace($pattern, $replacement, $content);
+        }
+
+        return $content;
     }
 
     /**

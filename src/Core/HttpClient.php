@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FFTTApi\Core;
 
 use FFTTApi\Enum\API;
+use FFTTApi\Enum\Charset;
 use FFTTApi\Exception\HttpException;
 use FFTTApi\Exception\XMLConversionException;
 
@@ -32,12 +33,12 @@ final class HttpClient extends AbstractHttpClient implements HttpClientContract
     /**
      * Appelle un endpoint et le convertit en tableau associatif.
      */
-    public function fetch(API $endpoint, array $requestParams): array
+    public function fetch(API $endpoint, array $requestParams, Charset $charset = Charset::UTF_8): array
     {
         ['response' => $rawResponse, 'httpCode' => $httpCode] = self::executeCall($endpoint, $requestParams);
 
         try {
-            $sanitizedResponse = self::sanitizeResponse($rawResponse);
+            $sanitizedResponse = self::sanitizeResponse($rawResponse, $charset);
             $payload = self::convertXmlToObject($sanitizedResponse);
 
             if ($httpCode !== 200) {
