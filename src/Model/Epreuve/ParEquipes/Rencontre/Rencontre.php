@@ -33,10 +33,6 @@ final readonly class Rencontre implements CanSerialize
 
     private ?string $numeroClubB;
 
-    private int $idPoule;
-
-    private bool $isLive;
-
     /**
      * @var array{
      *     is_retour: bool,
@@ -63,10 +59,6 @@ final readonly class Rencontre implements CanSerialize
         $model->lien = $data['lien'];
         $model->datePrevue = DateTimeUtils::date($data['dateprevue'], format: 'd/m/Y');
         $model->dateReelle = ValueTransformer::nullOrDate($data['datereelle']);
-        $model->numeroClubA = ValueTransformer::nullOrString($data['ncluba']);
-        $model->numeroClubB = ValueTransformer::nullOrString($data['nclubb']);
-        $model->idPoule = (int)$data['poule'];
-        $model->isLive = (bool)$data['live'];
 
         parse_str((string)$data['lien'], $linkParts);
 
@@ -81,6 +73,9 @@ final readonly class Rencontre implements CanSerialize
             'equip_id1' => (int)$linkParts['equip_id1'],
             'equip_id2' => (int)$linkParts['equip_id2'],
         ];
+
+        $model->numeroClubA = ValueTransformer::nullOrString($linkParts['clubnum_1']);
+        $model->numeroClubB = ValueTransformer::nullOrString($linkParts['clubnum_2']);
 
         return $model;
     }
