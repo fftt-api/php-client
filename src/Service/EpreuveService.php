@@ -7,6 +7,7 @@ namespace FFTTApi\Service;
 use FFTTApi\Contract\EpreuveContract;
 use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
+use FFTTApi\Enum\Charset;
 use FFTTApi\Enum\TypeEpreuve;
 use FFTTApi\Model\Epreuve\Division;
 use FFTTApi\Model\Epreuve\Epreuve;
@@ -23,7 +24,7 @@ final readonly class EpreuveService implements EpreuveContract
         $response = $this->httpClient->fetch(API::XML_EPREUVE, [
             'organisme' => $organizationId,
             'type' => $contestType->value,
-        ]);
+        ], Charset::ISO_8859_1);
 
         return array_map(Epreuve::fromArray(...), $response['epreuve'] ?? []);
     }
@@ -35,7 +36,7 @@ final readonly class EpreuveService implements EpreuveContract
             'organisme' => $organizationId,
             'epreuve' => $contestId,
             'type' => $contestType->value,
-        ]);
+        ], Charset::ISO_8859_1);
 
         return array_map(Division::fromArray(...), $response['division'] ?? []);
     }
