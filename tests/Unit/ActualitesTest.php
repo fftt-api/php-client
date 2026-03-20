@@ -17,6 +17,7 @@ describe('[xml_new_actu]', function (): void {
         expect($actualites)->toBeArray()
             ->and($actualites)->not->toBeEmpty()
             ->and($actualites[0])->toBeInstanceOf(Actualite::class)
+            ->and($actualites[0]->titre())->toBe('Félix Lebrun triomphe à Chongqing et s’offre un deuxième WTT Champions')
             ->and($actualites[0]->date()->isValid())->toBeTrue();
     });
 });
