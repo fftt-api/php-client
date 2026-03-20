@@ -180,9 +180,9 @@ interface JoueurContract
     /**
      * Renvoie le nombre de points virtuels d’un joueur (estimation).
      *
-     * @return float Nombre de points virtuels
+     * @return float|null Nombre de points virtuels ou null si joueur non-trouvé
      */
-    public function pointsVirtuels(string $licence): float;
+    public function pointsVirtuels(string $licence): ?float;
 
     /**
      * Renvoie le nombre de points virtuels d’un joueur (estimation) sur une période donnée.
@@ -190,7 +190,7 @@ interface JoueurContract
      * @param string $debut Date de début de la période (jj/mm/aaaa)
      * @param string $fin Date de fin de la période (jj/mm/aaaa)
      *
-     * @return float Nombre de points virtuels
+     * @return float|null Nombre de points virtuels ou null si joueur non-trouvé
      */
-    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): float;
+    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): ?float;
 }

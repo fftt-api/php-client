@@ -155,6 +155,10 @@ final readonly class JoueurService implements JoueurContract
     {
         $response = $this->httpClient->fetch(API::XML_PARTIE_MYSQL, ['licence' => $licence]);
 
+        if (empty($response)) {
+            return [];
+        }
+
         return array_map(PartieBaseClassement::fromArray(...), $response['partie'] ?? []);
     }
 
@@ -202,9 +206,14 @@ final readonly class JoueurService implements JoueurContract
     }
 
     /** @inheritdoc */
-    public function pointsVirtuels(string $licence): float
+    public function pointsVirtuels(string $licence): ?float
     {
         $joueur = $this->joueurParLicence($licence);
+
+        if ($joueur === null) {
+            return null;
+        }
+
         $parties = $this->partiesNonValidees($licence);
 
         return array_reduce(
@@ -223,14 +232,19 @@ final readonly class JoueurService implements JoueurContract
 
                 return $total + $resultat;
             },
-            initial: 0,
+            initial: 0.0,
         );
     }
 
     /** @inheritdoc */
-    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): float
+    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): ?float
     {
         $joueur = $this->joueurParLicence($licence);
+
+        if ($joueur === null) {
+            return null;
+        }
+
         $dateDebut = DateTimeUtils::date($debut, format: 'd/m/Y');
         $dateFin = DateTimeUtils::date($fin, format: 'd/m/Y');
 
@@ -253,7 +267,7 @@ final readonly class JoueurService implements JoueurContract
 
                 return $total;
             },
-            initial: 0,
+            initial: 0.0,
         );
     }
 }
