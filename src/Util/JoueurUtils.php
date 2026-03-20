@@ -21,12 +21,12 @@ final class JoueurUtils
             ];
         }
 
-        $regex = '/^N(?:°)?\s*(?<numero>\d+)\D+(?<sexe>[MF])?\s*(?<points>\d+)/u';
+        $regex = '/^(?:N°\s*(?<numero>\d+)\D+)?(?<sexe>[MF])\s*(?<points>\d+)/u';
 
         preg_match($regex, $classement, $matches);
 
         return [
-            'numero' => (int)$matches['numero'],
+            'numero' => isset($matches['numero']) && $matches['numero'] !== '' ? (int)$matches['numero'] : null,
             'sexe' => ValueTransformer::nullOrEnum($matches['sexe'], Sexe::class),
             'points' => (float)$matches['points'],
         ];
