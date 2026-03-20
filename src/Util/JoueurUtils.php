@@ -13,22 +13,46 @@ final class JoueurUtils
      */
     public static function parseClassementJoueur(string $classement): array
     {
+        // Pattern 1: 1897 (just points)
         if (preg_match('/^\d+$/', $classement)) {
             return [
                 'numero' => null,
-                'points' => (int)$classement,
-                'sexe' => null
+                'sexe' => null,
+                'points' => (float)$classement,
             ];
         }
 
-        $regex = '/^(?:N°\s*(?<numero>\d+)\D+)?(?<sexe>[MF])\s*(?<points>\d+)/u';
+        // Pattern 2: N°231- M 2485pts
+        if (preg_match('/^N°(?<numero>\d+)\D+(?<sexe>[MF])\s*(?<points>\d+)/u', $classement, $matches)) {
+            return [
+                'numero' => (int)$matches['numero'],
+                'sexe' => ValueTransformer::nullOrEnum($matches['sexe'], Sexe::class),
+                'points' => (float)$matches['points'],
+            ];
+        }
 
-        preg_match($regex, $classement, $matches);
+        // Pattern 3: M 972pts
+        if (preg_match('/^(?<sexe>[MF])\s*(?<points>\d+)/u', $classement, $matches)) {
+            return [
+                'numero' => null,
+                'sexe' => ValueTransformer::nullOrEnum($matches['sexe'], Sexe::class),
+                'points' => (float)$matches['points'],
+            ];
+        }
+
+        // Pattern 4: N174 - 2584
+        if (preg_match('/^N(?<numero>\d+)\s*\D+\s*(?<points>\d+)/u', $classement, $matches)) {
+            return [
+                'numero' => (int)$matches['numero'],
+                'sexe' => null,
+                'points' => (float)$matches['points'],
+            ];
+        }
 
         return [
-            'numero' => isset($matches['numero']) && $matches['numero'] !== '' ? (int)$matches['numero'] : null,
-            'sexe' => ValueTransformer::nullOrEnum($matches['sexe'], Sexe::class),
-            'points' => (float)$matches['points'],
+            'numero' => null,
+            'sexe' => null,
+            'points' => null,
         ];
     }
 
