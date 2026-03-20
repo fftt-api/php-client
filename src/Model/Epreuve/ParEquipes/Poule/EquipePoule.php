@@ -11,7 +11,7 @@ final readonly class EquipePoule implements CanSerialize
 {
     private int $poule;
 
-    private int $classement;
+    private ?int $classement;
 
     private string $equipe;
 
@@ -44,7 +44,7 @@ final readonly class EquipePoule implements CanSerialize
         $model = new self;
 
         $model->poule = (int)$data['poule'];
-        $model->classement = (int)$data['classement'];
+        $model->classement = array_key_exists('classement', $data) ? $data['classement'] : null;
         $model->equipe = $data['equipe'];
         $model->rencontresJouees = (int)$data['joue'];
         $model->pointsRencontre = (int)$data['pts'];
@@ -57,7 +57,7 @@ final readonly class EquipePoule implements CanSerialize
         $model->defaites = (int)$data['def'];
         $model->nuls = (int)$data['nul'];
         $model->totalPenalitesOuForfaits = (int)$data['pf'];
-        $model->positionDepart = ValueTransformer::nullOrInt($data['pos']);
+        $model->positionDepart = array_key_exists('pos', $data) ? ValueTransformer::nullOrInt($data['pos']) : null;
 
         return $model;
     }
