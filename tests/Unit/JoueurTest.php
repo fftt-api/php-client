@@ -26,7 +26,7 @@ describe('[xml_liste_joueur]', function (): void {
         expect($result)->toBeArray()
             ->and($result)->not->toBeEmpty()
             ->and($result[0])->toBeInstanceOf(JoueurBaseClassement::class)
-            ->and($result[0]->licence())->toBe('6733567');
+            ->and($result[0]->licence())->toBe('552494');
     });
 
     it('devrait retourner un tableau vide si aucun joueur trouvé nom (base classement)', function (): void {
@@ -201,7 +201,7 @@ describe('[xml_partie]', function (): void {
         expect($result)->toBeArray()
             ->and($result)->not->toBeEmpty()
             ->and($result[0])->toBeInstanceOf(PartieBaseSPID::class)
-            ->and($result[0]->partieId())->toBe(12434534);
+            ->and($result[0]->partieId())->toBe(12434537);
     });
 
     it("devrait retourner un tableau vide si aucun joueur trouvé pour l'historique des parties (base SPID)", function (): void {
@@ -216,7 +216,7 @@ describe('[xml_partie]', function (): void {
         expect($result)->toBeArray()
             ->and($result)->not->toBeEmpty()
             ->and($result[0])->toBeInstanceOf(Partie::class)
-            ->and($result[0]->partieId())->toBe(12434534);
+            ->and($result[0]->partieId())->toBe(12434537);
     });
 
     it("devrait retourner un tableau vide si aucun joueur trouvé pour l'historique des parties", function (): void {
