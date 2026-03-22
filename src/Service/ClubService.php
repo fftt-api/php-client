@@ -7,7 +7,6 @@ namespace FFTTApi\Service;
 use FFTTApi\Contract\ClubContract;
 use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
-use FFTTApi\Enum\Charset;
 use FFTTApi\Enum\TypeEquipe;
 use FFTTApi\Model\Club\Club;
 use FFTTApi\Model\Club\DetailClub;
@@ -87,7 +86,7 @@ final readonly class ClubService implements ClubContract
         $response = $this->httpClient->fetch(API::XML_EQUIPE, [
             'numclu' => $code,
             'type' => $typeEquipe->value,
-        ], Charset::ISO_8859_1);
+        ]);
 
         return array_map(
             Equipe::fromArray(...),

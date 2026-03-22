@@ -12,5 +12,5 @@ interface HttpClientContract
     /**
      * Appelle un endpoint et le convertit en tableau associatif.
      */
-    public function fetch(API $endpoint, array $requestParams, Charset $charset): array;
+    public function fetch(API $endpoint, array $requestParams, Charset $charset = Charset::ISO_8859_1): array;
 }

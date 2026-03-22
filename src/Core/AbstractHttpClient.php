@@ -28,7 +28,7 @@ abstract class AbstractHttpClient
     /** @var string URL de base sur laquelle les endpoints se greffent. */
     protected string $baseUrl = 'https://apiv2.fftt.com/mobile/pxml';
 
-    protected function sanitizeResponse(string $content, Charset $charset = Charset::UTF_8): string
+    protected function sanitizeResponse(string $content, Charset $charset): string
     {
         if ($charset === Charset::UTF_8) {
             $pattern = sprintf('/encoding="%s"/i', Charset::ISO_8859_1->value);
@@ -52,6 +52,29 @@ abstract class AbstractHttpClient
 
         if (!str_starts_with($content, '<?xml')) {
             throw XMLConversionException::make();
+        }
+
+        /**
+         * Extraction des 200 premiers bytes de la chaîne pour
+         * détection automatique de l'encodage utilisé.
+         */
+        $header = mb_substr($content, 0, min(200, mb_strlen($content)));
+
+        /**
+         * Si l'encodage présenté est en ISO-8859-1, on essaie
+         * de le convertir en UTF-8.
+         */
+        if (mb_stripos($header, 'ISO-8859-1') !== false) {
+            // Détection de l'encodage réel et conversion en UTF-8
+            $detectedEncoding = mb_detect_encoding($content, encodings: ['UTF-8', 'ISO-8859-1'], strict: true);
+
+            if ($detectedEncoding && $detectedEncoding !== 'UTF-8') {
+                $content = mb_convert_encoding($content, 'UTF-8', $detectedEncoding);
+            }
+
+            // Mise à jour de la déclaration XML
+            $content = str_ireplace('encoding="ISO-8859-1"', 'encoding="UTF-8"', $content);
+            $content = str_ireplace("encoding='ISO-8859-1'", "encoding='UTF-8'", $content);
         }
 
         $converted = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);

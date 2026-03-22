@@ -7,7 +7,6 @@ namespace FFTTApi\Service;
 use FFTTApi\Contract\JoueurContract;
 use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
-use FFTTApi\Enum\Charset;
 use FFTTApi\Exception\HttpException;
 use FFTTApi\Model\Joueur\DetailJoueur;
 use FFTTApi\Model\Joueur\DetailJoueurBaseClassement;
@@ -165,7 +164,7 @@ final readonly class JoueurService implements JoueurContract
     /** @inheritdoc */
     public function historiquePartiesBaseSPID(string $licence): array
     {
-        $response = $this->httpClient->fetch(API::XML_PARTIE, ['numlic' => $licence], Charset::ISO_8859_1);
+        $response = $this->httpClient->fetch(API::XML_PARTIE, ['numlic' => $licence]);
 
         return array_map(PartieBaseSPID::fromArray(...), $response['partie'] ?? []);
     }

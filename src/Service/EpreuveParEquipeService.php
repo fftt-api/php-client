@@ -7,7 +7,6 @@ namespace FFTTApi\Service;
 use FFTTApi\Contract\EpreuveParEquipeContract;
 use FFTTApi\Core\HttpClientContract;
 use FFTTApi\Enum\API;
-use FFTTApi\Enum\Charset;
 use FFTTApi\Model\Epreuve\ParEquipes\Poule\EquipePoule;
 use FFTTApi\Model\Epreuve\ParEquipes\Poule\Poule;
 use FFTTApi\Model\Epreuve\ParEquipes\Rencontre\DetailRencontre;
@@ -44,7 +43,7 @@ final readonly class EpreuveParEquipeService implements EpreuveParEquipeContract
             $params['cx_poule'] = $pouleId;
         }
 
-        $response = $this->httpClient->fetch(API::XML_RESULT_EQU, $params, Charset::ISO_8859_1);
+        $response = $this->httpClient->fetch(API::XML_RESULT_EQU, $params);
 
         return array_map(Rencontre::fromArray(...), $response['tour'] ?? []);
     }
@@ -103,7 +102,7 @@ final readonly class EpreuveParEquipeService implements EpreuveParEquipeContract
             $params = array_merge($params, $extraParams);
         }
 
-        $response = $this->httpClient->fetch(API::XML_CHP_RENC, $params, Charset::ISO_8859_1);
+        $response = $this->httpClient->fetch(API::XML_CHP_RENC, $params);
 
         if (empty($response)) {
             return null;

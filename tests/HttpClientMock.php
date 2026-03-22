@@ -84,8 +84,8 @@ final class HttpClientMock extends AbstractHttpClient implements HttpClientContr
         $mockContent = file_get_contents(__DIR__ . '/../../snapshots/snapshots/' . $mock['snapshot']);
 
         try {
-            $content = $this->sanitizeResponse($mockContent, $charset);
-            $payload = $this->convertXmlToObject($content);
+            // Convert XML first, then sanitize is not needed as convertXmlToObject handles it
+            $payload = $this->convertXmlToObject($mockContent);
 
             if ($mock['http_code'] !== 200) {
                 throw new HttpException($payload['erreur']);
@@ -104,17 +104,10 @@ final class HttpClientMock extends AbstractHttpClient implements HttpClientContr
      */
     protected function convertXmlToObject(string $content): array
     {
-        if (empty($content)) {
-            return [];
-        }
-
-        if (!str_starts_with($content, '<?xml')) {
-            throw XMLConversionException::make();
-        }
-
-        $converted = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
-
-        if ($converted === false) {
+        try {
+            return parent::convertXmlToObject($content);
+        } catch (XMLConversionException $e) {
+            // Display XML errors for debugging in tests
             $errors = libxml_get_errors();
 
             foreach ($errors as $error) {
@@ -123,10 +116,8 @@ final class HttpClientMock extends AbstractHttpClient implements HttpClientContr
 
             libxml_clear_errors();
 
-            throw XMLConversionException::make();
+            throw $e;
         }
-
-        return json_decode(json_encode($converted), associative: true);
     }
 
     private function displayXmlError(LibXMLError $error, string $xml): string

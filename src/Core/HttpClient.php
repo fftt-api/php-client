@@ -33,7 +33,7 @@ final class HttpClient extends AbstractHttpClient implements HttpClientContract
     /**
      * Appelle un endpoint et le convertit en tableau associatif.
      */
-    public function fetch(API $endpoint, array $requestParams, Charset $charset = Charset::UTF_8): array
+    public function fetch(API $endpoint, array $requestParams, Charset $charset = Charset::ISO_8859_1): array
     {
         ['response' => $rawResponse, 'httpCode' => $httpCode] = self::executeCall($endpoint, $requestParams);
 
