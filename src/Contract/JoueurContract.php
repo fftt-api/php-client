@@ -11,6 +11,7 @@ use FFTTApi\Model\Joueur\DetailJoueurBaseSPID;
 use FFTTApi\Model\Joueur\HistoriqueClassement;
 use FFTTApi\Model\Joueur\JoueurBaseClassement;
 use FFTTApi\Model\Joueur\JoueurBaseSPID;
+use FFTTApi\Model\Joueur\PointsVirtuels;
 use FFTTApi\Model\Partie\Partie;
 use FFTTApi\Model\Partie\PartieBaseClassement;
 use FFTTApi\Model\Partie\PartieBaseSPID;
@@ -180,17 +181,18 @@ interface JoueurContract
     /**
      * Renvoie le nombre de points virtuels d’un joueur (estimation).
      *
-     * @return float|null Nombre de points virtuels ou null si joueur non-trouvé
+     * @return PointsVirtuels|null Nombre de points virtuels ou null si joueur non-trouvé
      */
-    public function pointsVirtuels(string $licence): ?float;
+    public function pointsVirtuels(string $licence): ?PointsVirtuels;
 
     /**
      * Renvoie le nombre de points virtuels d’un joueur (estimation) sur une période donnée.
      *
+     * @param string $licence Joueur ou licence du joueur
      * @param string $debut Date de début de la période (jj/mm/aaaa)
      * @param string $fin Date de fin de la période (jj/mm/aaaa)
      *
-     * @return float|null Nombre de points virtuels ou null si joueur non-trouvé
+     * @return PointsVirtuels|null Nombre de points virtuels ou null si joueur non-trouvé
      */
-    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): ?float;
+    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): ?PointsVirtuels;
 }

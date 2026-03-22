@@ -14,6 +14,7 @@ use FFTTApi\Model\Joueur\DetailJoueurBaseSPID;
 use FFTTApi\Model\Joueur\HistoriqueClassement;
 use FFTTApi\Model\Joueur\JoueurBaseClassement;
 use FFTTApi\Model\Joueur\JoueurBaseSPID;
+use FFTTApi\Model\Joueur\PointsVirtuels;
 use FFTTApi\Model\Partie\Partie;
 use FFTTApi\Model\Partie\PartieBaseClassement;
 use FFTTApi\Model\Partie\PartieBaseSPID;
@@ -205,7 +206,7 @@ final readonly class JoueurService implements JoueurContract
     }
 
     /** @inheritdoc */
-    public function pointsVirtuels(string $licence): ?float
+    public function pointsVirtuels(string $licence): ?PointsVirtuels
     {
         $joueur = $this->joueurParLicence($licence);
 
@@ -215,28 +216,33 @@ final readonly class JoueurService implements JoueurContract
 
         $parties = $this->partiesNonValidees($licence);
 
-        return array_reduce(
-            array: $parties,
-            callback: function (float $total, Partie $partie) use ($joueur): float {
-                if ($partie->forfait()) {
-                    return $total;
-                }
+        $pointsVirtuels = new PointsVirtuels();
 
-                $resultat = EstimationPoint::estimer(
-                    classementJoueurA: $joueur->pointsOfficiels(),
-                    classementJoueurB: $partie->pointsAdversaire(),
-                    victoire: $partie->victoire(),
-                    coefficient: $partie->coefficient(),
-                );
+        foreach ($parties as $partie) {
+            if ($partie->forfait()) {
+                $pointsVirtuels->forfait();
+                continue;
+            }
 
-                return $total + $resultat;
-            },
-            initial: 0.0,
-        );
+            $estimation = EstimationPoint::estimer(
+                classementJoueurA: $joueur->pointsOfficiels(),
+                classementJoueurB: $partie->pointsAdversaire(),
+                victoire: $partie->victoire(),
+                coefficient: $partie->coefficient(),
+            );
+
+            if ($partie->victoire()) {
+                $pointsVirtuels->victoire($estimation);
+            } else {
+                $pointsVirtuels->defaite($estimation);
+            }
+        }
+
+        return $pointsVirtuels;
     }
 
     /** @inheritdoc */
-    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): ?float
+    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): ?PointsVirtuels
     {
         $joueur = $this->joueurParLicence($licence);
 
@@ -247,26 +253,35 @@ final readonly class JoueurService implements JoueurContract
         $dateDebut = DateTimeUtils::date($debut, format: 'd/m/Y');
         $dateFin = DateTimeUtils::date($fin, format: 'd/m/Y');
 
-        return array_reduce(
-            array: $this->partiesNonValidees($licence),
-            callback: function (float $total, Partie $partie) use ($joueur, $dateDebut, $dateFin): float {
-                $dateInRange = $partie->date()->isAfter($dateDebut) && $partie->date()->isBefore($dateFin);
-                $exactDate = $partie->date()->isSameDay($dateDebut);
+        $parties = $this->partiesNonValidees($licence);
 
-                if (($exactDate || $dateInRange) && !$partie->forfait()) {
-                    $resultat = EstimationPoint::estimer(
-                        classementJoueurA: $joueur->pointsOfficiels(),
-                        classementJoueurB: $partie->pointsAdversaire(),
-                        victoire: $partie->victoire(),
-                        coefficient: $partie->coefficient(),
-                    );
+        $pointsVirtuels = new PointsVirtuels();
 
-                    return $total + $resultat;
+        foreach ($parties as $partie) {
+            $dateInRange = $partie->date()->isAfter($dateDebut) && $partie->date()->isBefore($dateFin);
+            $exactDate = $partie->date()->isSameDay($dateDebut);
+
+            if (($exactDate || $dateInRange)) {
+                if ($partie->forfait()) {
+                    $pointsVirtuels->forfait();
+                    continue;
                 }
 
-                return $total;
-            },
-            initial: 0.0,
-        );
+                $estimation = EstimationPoint::estimer(
+                    classementJoueurA: $joueur->pointsOfficiels(),
+                    classementJoueurB: $partie->pointsAdversaire(),
+                    victoire: $partie->victoire(),
+                    coefficient: $partie->coefficient(),
+                );
+
+                if ($partie->victoire()) {
+                    $pointsVirtuels->victoire($estimation);
+                } else {
+                    $pointsVirtuels->defaite($estimation);
+                }
+            }
+        }
+
+        return $pointsVirtuels;
     }
 }

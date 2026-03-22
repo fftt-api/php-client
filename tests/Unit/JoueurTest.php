@@ -10,6 +10,7 @@ use FFTTApi\Model\Joueur\DetailJoueurBaseSPID;
 use FFTTApi\Model\Joueur\HistoriqueClassement;
 use FFTTApi\Model\Joueur\JoueurBaseClassement;
 use FFTTApi\Model\Joueur\JoueurBaseSPID;
+use FFTTApi\Model\Joueur\PointsVirtuels;
 use FFTTApi\Model\Partie\Partie;
 use FFTTApi\Model\Partie\PartieBaseClassement;
 use FFTTApi\Model\Partie\PartieBaseSPID;
@@ -256,7 +257,7 @@ describe('[xml_partie]', function (): void {
     it("devrait calculer les points virtuels des parties non-validées d'un joueur", function (): void {
         $result = $this->api->joueur->pointsVirtuels('1');
 
-        expect($result)->toBe(-104.0);
+        expect($result)->toBeInstanceOf(PointsVirtuels::class)->and($result->estimation())->toBe(-104.0);
     });
 
     it('devrait retourner null si aucun joueur trouvé pour calculer les points virtuels', function (): void {
@@ -268,7 +269,7 @@ describe('[xml_partie]', function (): void {
     it("devrait calculer les points virtuels des parties non-validées d'un joueur sur une période donnée", function (): void {
         $result = $this->api->joueur->pointsVirtuelsSurPeriode('1', '15/03/2026', '15/03/2026');
 
-        expect($result)->toBe(-87.0);
+        expect($result)->toBeInstanceOf(PointsVirtuels::class)->and($result->estimation())->toBe(-87.0);
     });
 
     it('devrait retourner null si aucun joueur trouvé pour calculer les points virtuels sur une période donnée', function (): void {
