@@ -14,22 +14,34 @@ final class PointsVirtuels
 
     private int $forfaits = 0;
 
+    private int $performances = 0;
+
+    private int $contrePerformances = 0;
+
     private float $estimation = 0.0;
 
-    public function victoire(float $points): self
+    public function victoire(float $points, bool $isPerformance): self
     {
         $this->victoires++;
         $this->parties++;
         $this->estimation += $points;
 
+        if ($isPerformance) {
+            $this->performances++;
+        }
+
         return $this;
     }
 
-    public function defaite(float $points): self
+    public function defaite(float $points, bool $isContrePerformance): self
     {
         $this->defaites++;
         $this->parties++;
         $this->estimation += $points;
+
+        if ($isContrePerformance) {
+            $this->contrePerformances++;
+        }
 
         return $this;
     }
@@ -60,6 +72,16 @@ final class PointsVirtuels
     public function forfaits(): int
     {
         return $this->forfaits;
+    }
+
+    public function performances(): int
+    {
+        return $this->performances;
+    }
+
+    public function contrePerformances(): int
+    {
+        return $this->contrePerformances;
     }
 
     public function estimation(): float

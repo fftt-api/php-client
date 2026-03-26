@@ -232,9 +232,9 @@ final readonly class JoueurService implements JoueurContract
             );
 
             if ($partie->victoire()) {
-                $pointsVirtuels->victoire($estimation);
+                $pointsVirtuels->victoire($estimation, $joueur->pointsOfficiels() < $partie->pointsAdversaire());
             } else {
-                $pointsVirtuels->defaite($estimation);
+                $pointsVirtuels->defaite($estimation, $joueur->pointsOfficiels() > $partie->pointsAdversaire());
             }
         }
 
@@ -275,9 +275,9 @@ final readonly class JoueurService implements JoueurContract
                 );
 
                 if ($partie->victoire()) {
-                    $pointsVirtuels->victoire($estimation);
+                    $pointsVirtuels->victoire($estimation, $joueur->pointsOfficiels() < $partie->pointsAdversaire());
                 } else {
-                    $pointsVirtuels->defaite($estimation);
+                    $pointsVirtuels->defaite($estimation, $joueur->pointsOfficiels() > $partie->pointsAdversaire());
                 }
             }
         }
