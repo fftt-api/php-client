@@ -26,7 +26,7 @@ final class HttpClient extends AbstractHttpClient implements HttpClientContract
         $this->appId = $appId;
         $this->appKey = $appKey;
         $this->serial = $serial;
-        $this->time = date('YmdHis');
+        $this->time = date('YmdHisv');
         $this->tmc = hash_hmac('sha1', $this->time, hash('md5', $this->appKey));
     }
 
