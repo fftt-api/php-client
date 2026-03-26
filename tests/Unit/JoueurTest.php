@@ -30,7 +30,7 @@ describe('[xml_liste_joueur]', function (): void {
             ->and($result[0]->licence())->toBe('552494');
     });
 
-    it('devrait retourner un tableau vide si aucun joueur trouvé nom (base classement)', function (): void {
+    it('devrait retourner un tableau vide si aucun joueur trouvé par nom (base classement)', function (): void {
         $result = $this->api->joueur->joueursParNomSurBaseClassement('999999');
 
         expect($result)->toBeArray()->and($result)->toBeEmpty();
