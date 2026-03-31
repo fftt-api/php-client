@@ -1,10 +1,8 @@
 # Client PHP non-officiel de l'API FFTT 🏓
 
-Ce client PHP permet d'interagir avec l'API de la Fédération Française de Tennis de Table (FFTT) pour récupérer des
-informations sur les joueurs, les clubs et les compétitions.
+Ce client PHP permet d'interagir avec l'API de la Fédération Française de Tennis de Table (FFTT) pour récupérer des informations sur les joueurs, les clubs et les compétitions.
 
-Ce projet est destiné aux développeurs qui souhaitent intégrer des fonctionnalités liées à la FFTT dans leurs
-applications PHP.
+Ce projet est destiné aux développeurs qui souhaitent intégrer des fonctionnalités liées à la FFTT dans leurs applications PHP.
 
 ## Installation
 
@@ -22,15 +20,13 @@ echo sprintf('Bonjour %s %s !', $joueur->nom(), $joueur->prenom());
 
 ## Identifiants
 
-Les identifiants nécessaires pour utiliser ce client sont disponibles
-sur [le site de la FFTT](https://www.fftt.com/api/). Vous devez vous inscrire
-et obtenir une paire d'identifiants (APP_ID, APP_KEY) pour pouvoir utiliser ce client.
+Les identifiants nécessaires pour utiliser ce client sont disponibles sur [le site de la FFTT](https://www.fftt.com/api/). Vous devez vous inscrire et obtenir une paire d'identifiants (APP_ID, APP_KEY) pour pouvoir utiliser ce client.
 
-Les identifiants sont sensibles et doivent être traités avec précaution. Il est recommandé de les stocker dans des
-variables d'environnement ou de fichiers de configuration sécurisés plutôt que de les écrire en dur dans le code source.
+L'API demande également de fournir un numéro de série (SERIAL) unique qui sera affecté de façon permanente à chacun des utilisateurs de cette librairie. Il prend la forme d'une chaîne de 15 caractères aléatoires contenant des chiffres et des lettres `[a-z][A-Z][0-9]`).
 
-L'API de la FFTT est soumise à des conditions d'utilisation et de confidentialité. Veuillez consulter les termes et
-conditions de l'API pour plus d'informations.
+Les identifiants sont sensibles et doivent être traités avec précaution. Il est recommandé de les stocker dans des variables d'environnement ou de fichiers de configuration sécurisés plutôt que de les écrire en dur dans le code source.
+
+L'API de la FFTT est soumise à des conditions d'utilisation et de confidentialité. Veuillez consulter les termes et conditions de l'API pour plus d'informations.
 
 ## Méthodes disponibles
 
