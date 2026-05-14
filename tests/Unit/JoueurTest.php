@@ -10,10 +10,7 @@ use FFTTApi\Model\Joueur\DetailJoueurBaseSPID;
 use FFTTApi\Model\Joueur\HistoriqueClassement;
 use FFTTApi\Model\Joueur\JoueurBaseClassement;
 use FFTTApi\Model\Joueur\JoueurBaseSPID;
-use FFTTApi\Model\Joueur\PointsVirtuels;
-use FFTTApi\Model\Partie\Partie;
 use FFTTApi\Model\Partie\PartieBaseClassement;
-use FFTTApi\Model\Partie\PartieBaseSPID;
 use FFTTApi\Tests\HttpClientMock;
 
 beforeEach(function (): void {
@@ -192,90 +189,6 @@ describe('[xml_partie_mysql]', function (): void {
         $result = $this->api->joueur->historiquePartiesBaseClassement('999999');
 
         expect($result)->toBeArray()->and($result)->toHaveCount(0);
-    });
-});
-
-describe('[xml_partie]', function (): void {
-    it("devrait récupérer l'historique des parties d'un joueur (base SPID)", function (): void {
-        $result = $this->api->joueur->historiquePartiesBaseSPID('1');
-
-        expect($result)->toBeArray()
-            ->and($result)->not->toBeEmpty()
-            ->and($result[0])->toBeInstanceOf(PartieBaseSPID::class)
-            ->and($result[0]->partieId())->toBe(12434537);
-    });
-
-    it("devrait retourner un tableau vide si aucun joueur trouvé pour l'historique des parties (base SPID)", function (): void {
-        $result = $this->api->joueur->historiquePartiesBaseSPID('999999');
-
-        expect($result)->toBeArray()->and($result)->toHaveCount(0);
-    });
-
-    it("devrait récupérer l'historique des parties d'un joueur", function (): void {
-        $result = $this->api->joueur->historiqueParties('1');
-
-        expect($result)->toBeArray()
-            ->and($result)->not->toBeEmpty()
-            ->and($result[0])->toBeInstanceOf(Partie::class)
-            ->and($result[0]->partieId())->toBe(12434537);
-    });
-
-    it("devrait retourner un tableau vide si aucun joueur trouvé pour l'historique des parties", function (): void {
-        $result = $this->api->joueur->historiqueParties('999999');
-
-        expect($result)->toBeArray()->and($result)->toHaveCount(0);
-    });
-
-    it("devrait récupérer les parties validées d'un joueur", function (): void {
-        $result = $this->api->joueur->partiesValidees('1');
-
-        expect($result)->toBeArray()
-            ->and($result)->toHaveCount(15)
-            ->and($result[0])->toBeInstanceOf(Partie::class);
-    });
-
-    it("devrait retourner un tableau vide si aucun joueur trouvé pour récupérer les parties validées", function (): void {
-        $result = $this->api->joueur->partiesValidees('999999');
-
-        expect($result)->toBeArray()->and($result)->toHaveCount(0);
-    });
-
-    it("devrait récupérer les parties non-validées d'un joueur", function (): void {
-        $result = $this->api->joueur->partiesNonValidees('1');
-
-        expect($result)->toBeArray()
-            ->and($result)->toHaveCount(16)
-            ->and($result[0])->toBeInstanceOf(Partie::class);
-    });
-
-    it('devrait retourner un tableau vide si aucun joueur trouvé pour récupérer les parties non-validées', function (): void {
-        $result = $this->api->joueur->partiesNonValidees('999999');
-
-        expect($result)->toBeArray()->and($result)->toHaveCount(0);
-    });
-
-    it("devrait calculer les points virtuels des parties non-validées d'un joueur", function (): void {
-        $result = $this->api->joueur->pointsVirtuels('1');
-
-        expect($result)->toBeInstanceOf(PointsVirtuels::class)->and($result->estimation())->toBe(-104.0);
-    });
-
-    it('devrait retourner null si aucun joueur trouvé pour calculer les points virtuels', function (): void {
-        $result = $this->api->joueur->pointsVirtuels('999999');
-
-        expect($result)->toBeNull();
-    });
-
-    it("devrait calculer les points virtuels des parties non-validées d'un joueur sur une période donnée", function (): void {
-        $result = $this->api->joueur->pointsVirtuelsSurPeriode('1', '15/03/2026', '15/03/2026');
-
-        expect($result)->toBeInstanceOf(PointsVirtuels::class)->and($result->estimation())->toBe(-87.0);
-    });
-
-    it('devrait retourner null si aucun joueur trouvé pour calculer les points virtuels sur une période donnée', function (): void {
-        $result = $this->api->joueur->pointsVirtuelsSurPeriode('999999', '15/03/2026', '15/03/2026');
-
-        expect($result)->toBeNull();
     });
 });
 

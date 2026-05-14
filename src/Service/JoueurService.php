@@ -14,12 +14,7 @@ use FFTTApi\Model\Joueur\DetailJoueurBaseSPID;
 use FFTTApi\Model\Joueur\HistoriqueClassement;
 use FFTTApi\Model\Joueur\JoueurBaseClassement;
 use FFTTApi\Model\Joueur\JoueurBaseSPID;
-use FFTTApi\Model\Joueur\PointsVirtuels;
-use FFTTApi\Model\Partie\Partie;
 use FFTTApi\Model\Partie\PartieBaseClassement;
-use FFTTApi\Model\Partie\PartieBaseSPID;
-use FFTTApi\Util\DateTimeUtils;
-use FFTTApi\Util\EstimationPoint;
 
 final readonly class JoueurService implements JoueurContract
 {
@@ -163,125 +158,10 @@ final readonly class JoueurService implements JoueurContract
     }
 
     /** @inheritdoc */
-    public function historiquePartiesBaseSPID(string $licence): array
-    {
-        $response = $this->httpClient->fetch(API::XML_PARTIE, ['numlic' => $licence]);
-
-        return array_map(PartieBaseSPID::fromArray(...), $response['partie'] ?? []);
-    }
-
-    /** @inheritdoc */
-    public function historiqueParties(string $licence): array
-    {
-        $classement = $this->historiquePartiesBaseClassement($licence);
-        $spid = $this->historiquePartiesBaseSPID($licence);
-        $parties = [];
-
-        foreach ($spid as $partieSPID) {
-            $partieClassement = array_find($classement, fn (PartieBaseClassement $partie): bool => $partie->partieId() === $partieSPID->partieId());
-            $parties[] = Partie::fromModels($partieSPID, $partieClassement);
-        }
-
-        return $parties;
-    }
-
-    /** @inheritdoc */
     public function historiqueClassementOfficiel(string $licence): array
     {
         $response = $this->httpClient->fetch(API::XML_HISTO_CLASSEMENT, ['licence' => $licence]);
 
         return array_map(HistoriqueClassement::fromArray(...), $response['histo'] ?? []);
-    }
-
-    /** @inheritdoc */
-    public function partiesValidees(string $licence): array
-    {
-        return array_values(array_filter($this->historiqueParties($licence), fn (Partie $partie): bool => $partie->valide()));
-    }
-
-    /** @inheritdoc */
-    public function partiesNonValidees(string $licence): array
-    {
-        return array_values(array_filter($this->historiqueParties($licence), fn (Partie $partie): bool => !$partie->valide()));
-    }
-
-    /** @inheritdoc */
-    public function pointsVirtuels(string $licence): ?PointsVirtuels
-    {
-        $joueur = $this->joueurParLicence($licence);
-
-        if ($joueur === null) {
-            return null;
-        }
-
-        $parties = $this->partiesNonValidees($licence);
-
-        $pointsVirtuels = new PointsVirtuels();
-
-        foreach ($parties as $partie) {
-            if ($partie->forfait()) {
-                $pointsVirtuels->forfait();
-                continue;
-            }
-
-            $estimation = EstimationPoint::estimer(
-                classementJoueurA: $joueur->pointsOfficiels(),
-                classementJoueurB: $partie->pointsAdversaire(),
-                victoire: $partie->victoire(),
-                coefficient: $partie->coefficient(),
-            );
-
-            if ($partie->victoire()) {
-                $pointsVirtuels->victoire($estimation, $joueur->pointsOfficiels() < $partie->pointsAdversaire());
-            } else {
-                $pointsVirtuels->defaite($estimation, $joueur->pointsOfficiels() > $partie->pointsAdversaire());
-            }
-        }
-
-        return $pointsVirtuels;
-    }
-
-    /** @inheritdoc */
-    public function pointsVirtuelsSurPeriode(string $licence, string $debut, string $fin): ?PointsVirtuels
-    {
-        $joueur = $this->joueurParLicence($licence);
-
-        if ($joueur === null) {
-            return null;
-        }
-
-        $dateDebut = DateTimeUtils::date($debut, format: 'd/m/Y');
-        $dateFin = DateTimeUtils::date($fin, format: 'd/m/Y');
-
-        $parties = $this->partiesNonValidees($licence);
-
-        $pointsVirtuels = new PointsVirtuels();
-
-        foreach ($parties as $partie) {
-            $dateInRange = $partie->date()->isAfter($dateDebut) && $partie->date()->isBefore($dateFin);
-            $exactDate = $partie->date()->isSameDay($dateDebut);
-
-            if (($exactDate || $dateInRange)) {
-                if ($partie->forfait()) {
-                    $pointsVirtuels->forfait();
-                    continue;
-                }
-
-                $estimation = EstimationPoint::estimer(
-                    classementJoueurA: $joueur->pointsOfficiels(),
-                    classementJoueurB: $partie->pointsAdversaire(),
-                    victoire: $partie->victoire(),
-                    coefficient: $partie->coefficient(),
-                );
-
-                if ($partie->victoire()) {
-                    $pointsVirtuels->victoire($estimation, $joueur->pointsOfficiels() < $partie->pointsAdversaire());
-                } else {
-                    $pointsVirtuels->defaite($estimation, $joueur->pointsOfficiels() > $partie->pointsAdversaire());
-                }
-            }
-        }
-
-        return $pointsVirtuels;
     }
 }
