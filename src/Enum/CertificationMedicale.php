@@ -11,5 +11,6 @@ enum CertificationMedicale: string
     case SANS_PRATIQUE_SPORTIVE = 'N';
     case STANDARD = 'C';
     case QUADRUPLE = 'Q';
+    case PARCOURS_PREVENTION_SANTE = 'P';
     case AUTRE = '';
 }
