@@ -47,7 +47,7 @@ interface JoueurContract
      * @param bool $valide Filtrer uniquement sur les licences
      *                    de la saison en cours
      *
-     * @return array<array-key, JoueurBaseSPID[]> Ensemble des joueurs trouvés
+     * @return array<array-key, JoueurBaseSPID> Ensemble des joueurs trouvés
      */
     public function joueursParNom(string $nom, ?string $prenom = null, bool $valide = false): array;
 
@@ -79,7 +79,7 @@ interface JoueurContract
      * ---------------------------------------------------------
      * Cherche un ou plusieurs joueur(s) par leur numéro de club.
      *
-     * @return array<array-key, DetailJoueur[]> Ensemble des joueurs trouvés
+     * @return array<array-key, DetailJoueur> Ensemble des joueurs trouvés
      */
     public function joueursParClub(string $numeroClub): array;
 
@@ -91,7 +91,7 @@ interface JoueurContract
      *
      * @param TypeLicence[] $typesLicence
      *
-     * @return array<array-key, DetailJoueur[]> Ensemble des joueurs trouvés
+     * @return array<array-key, DetailJoueur> Ensemble des joueurs trouvés
      */
     public function joueursParClubEtType(string $numeroClub, array $typesLicence): array;
 
