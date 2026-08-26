@@ -50,6 +50,11 @@ final readonly class ValueTransformer
         return self::notEmpty($value);
     }
 
+    public static function allExists(mixed ...$values): bool
+    {
+        return array_reduce($values, fn (bool $carry, mixed $value) => $carry && self::notEmpty($value), true);
+    }
+
     private static function notEmpty(mixed $value): bool
     {
         $valid = isset($value);
